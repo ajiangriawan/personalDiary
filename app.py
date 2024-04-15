@@ -1,20 +1,11 @@
-import os
-from os.path import join, dirname
-from dotenv import load_dotenv
-
 from flask import Flask, render_template, jsonify, request
 from pymongo import MongoClient
 from datetime import datetime
 
-dotenv_path = join(dirname(__file__), '.env')
-load_dotenv(dotenv_path)
+connection_string = "mongodb+srv://test:sparta@msib.nxgqlja.mongodb.net/?retryWrites=true&w=majority&appName=Msib"
+client = MongoClient(connection_string)
 
-MONGODB_URI = os.environ.get("MONGODB_URI")
-DB_NAME =  os.environ.get("DB_NAME")
-
-client = MongoClient(MONGODB_URI)
-
-db = client[DB_NAME]
+db = client.dbsparta
 
 app = Flask(__name__)
 
@@ -37,22 +28,21 @@ def save_diary():
     
     file = request.files["file_give"]
     extension = file.filename.split('.')[-1]
-    filename = f'static/post-{mytime}.{extension}'
-    file.save(filename)
+    filename = f'post-{mytime}.{extension}'
+    save_to = f'static/{filename}'
+    file.save(save_to)
     
     profile = request.files["profile_give"]
     extension = profile.filename.split('.')[-1]
-    profilename = f'static/profile-{mytime}.{extension}'
-    profile.save(profilename)
-    
-    time = today.strftime('%Y.%m.%d')
+    profilename = f'profile-{mytime}.{extension}'
+    save_to_profile = f'static/{profilename}'
+    profile.save(save_to_profile)
     
     doc = {
         'file': filename,
         'profile': profilename,
         'title':title_receive,
-        'content':content_receive,
-        'time':time,
+        'content':content_receive
     }
     
     db.diary.insert_one(doc)
