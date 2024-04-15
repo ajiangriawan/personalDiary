@@ -50,8 +50,8 @@ def save_diary():
     time = today.strftime('%Y.%m.%d')
     
     doc = {
-        'file': filename,
-        'profile': profilename,
+        'file': save_to,
+        'profile': save_to_profile,
         'title':title_receive,
         'content':content_receive,
         'time':time,
